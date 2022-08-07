@@ -34,11 +34,11 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/tesmart-homekit:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/tesmart-homekit:latest-amd64
           no-cache: true
 
       - name: Create manifest
-        run: docker manifest create ${{ secrets.DOCKER_HUB_USERNAME }}/tesmart-homekit:latest
+        run: docker manifest create ${{ secrets.DOCKER_HUB_USERNAME }}/tesmart-homekit:latest ${{ secrets.DOCKER_HUB_USERNAME }}/rack-controller:latest-amd64
 
       - name: Push manifest
         run: docker manifest push --purge ${{ secrets.DOCKER_HUB_USERNAME }}/tesmart-homekit:latest
