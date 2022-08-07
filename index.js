@@ -5,8 +5,19 @@ const Characteristic = hap.Characteristic;
 const CharacteristicEventTypes = hap.CharacteristicEventTypes;
 const Service = hap.Service;
 
-const switchIp = "10.10.10.2"
+const switchIp = "10.10.10.3"
 const switchPort = "5000"
+
+//check if can connect to switch
+const net = require('net');
+const client = new net.Socket();
+
+client.connect(switchPort, switchIp, function() {
+    console.log('Connected');
+    client.destroy();
+}).on('error', function(e) {
+    console.log('Error: ' + e);
+})
 
 const televisionAccessory = new Accessory('Television', hap.uuid.generate('Television'));
 televisionAccessory.category = hap.Categories.TELEVISION;
@@ -33,7 +44,6 @@ televisionOnCharacteristic.on(CharacteristicEventTypes.SET, (value, callback) =>
 televisionService.addCharacteristic(televisionOnCharacteristic);
 
 televisionAccessory.addService(televisionService)
-var net = require('net');
 
 televisionService.getCharacteristic(Characteristic.ActiveIdentifier).on(CharacteristicEventTypes.SET, (value, callback) => {
     console.log('SET RemoteKey to', value);
@@ -75,9 +85,12 @@ for (let i = 0; i < 8; i++) {
     televisionService.addLinkedService(inputHDMI1);
 }
 
-
 televisionAccessory.publish({
-    username: "DA:33:3D:E3:CE:00", port: 51826, pincode: "000-00-001", category: hap.Categories.TELEVISION /* BRIDGE */
+    username: "DA:33:3D:E3:CE:00",
+    port: 51826,
+    pincode: "000-00-001",
+    category: hap.Categories.TELEVISION /* BRIDGE */
+
 }).then(r => {
     console.log("Published:", r);
 }).catch(e => {
